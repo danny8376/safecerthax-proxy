@@ -93,6 +93,8 @@ GetSystemCommonETicketResponse = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soa
 
 UndesiredRequestResponse = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html><head><title>Proxy exit!</title></head><body bgcolor=\"#FFFFFF\">Please set your Internet back to normal.</body></html>"
 
+RedirectResponseTmpl = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html><head><title>Redirecting...</title></head><body bgcolor=\"#FFFFFF\">Redirecting to <a href=\"{}\">{}</a>...</body></html>"
+
 BrowserVersionCheckMatch = re.compile('(?i)\\/(?:SNAKE|CTR)\\/\\d{1,2}\\/(?:JPN|USA|EUR|KOR|CHN|TWN)')
 
 cdn_nintendowifi = re.compile("(?i)((?:.+\\.)?)(?:cdn\\.nintendowifi\\.net)")
@@ -101,6 +103,19 @@ cdn_nintendowifi = re.compile("(?i)((?:.+\\.)?)(?:cdn\\.nintendowifi\\.net)")
 def request(flow: http.HTTPFlow) -> None:
     if re.fullmatch(cdn_nintendowifi, flow.request.host):
         return
+
+    if flow.request.host == 'searcher.wii.com' and flow.request.path.startswith('/search/search?'):
+        try:
+            k = flow.request.query['k']
+            if k.startswith(('http://', 'https://')):
+                flow.response = http.Response.make(
+                    301,
+                    RedirectResponseTmpl.format(k, k),
+                    {"Content-Type": "text/plain", "Location": k}
+                )
+                return
+        except:
+            pass
 
     if flow.request.host not in [
         'nus.c.shop.nintendowifi.net',
