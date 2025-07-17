@@ -93,7 +93,7 @@ GetSystemCommonETicketResponse = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soa
 
 UndesiredRequestResponse = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html><head><title>Proxy exit!</title></head><body bgcolor=\"#FFFFFF\">Please set your Internet back to normal.</body></html>"
 
-RedirectResponseTmpl = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html><head><title>Redirecting...</title></head><body bgcolor=\"#FFFFFF\">Redirecting to <a href=\"{}\">{}</a>...</body></html>"
+RedirectResponseTemplate = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html><head><title>Redirecting...</title></head><body bgcolor=\"#FFFFFF\">Redirecting to <a href=\"{}\">{}</a>...</body></html>"
 
 BrowserVersionCheckMatch = re.compile('(?i)\\/(?:SNAKE|CTR)\\/\\d{1,2}\\/(?:JPN|USA|EUR|KOR|CHN|TWN)')
 
@@ -110,7 +110,7 @@ def request(flow: http.HTTPFlow) -> None:
             if k.startswith(('http://', 'https://')):
                 flow.response = http.Response.make(
                     301,
-                    RedirectResponseTmpl.format(k, k),
+                    RedirectResponseTemplate.format(k, k),
                     {"Content-Type": "text/plain", "Location": k}
                 )
                 return
